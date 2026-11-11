@@ -18,7 +18,9 @@ Ensuite, sur le téléphone :
 3. Lance Écho depuis l'icône : plein écran.
 4. Colle ta clé API Gemini au premier lancement (ou plus tard dans ⚙️ Paramètres).
 
+### Option 1 bis : Netlify (marche aussi avec un dépôt privé)
 
+Sur netlify.com : *Add new site → Import an existing project → GitHub*, choisis le dépôt `Social` et la branche `main`. Tout est préréglé par `netlify.toml` : clique simplement sur *Deploy*. Netlify te donne une adresse du type `https://nom-du-site.netlify.app`, puis suis les étapes 1 à 4 ci-dessus.
 
 ### Option 2 : depuis ton PC, sur le même Wi-Fi
 
