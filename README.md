@@ -18,7 +18,7 @@ Ensuite, sur le téléphone :
 3. Lance Écho depuis l'icône : plein écran.
 4. Colle ta clé API Gemini au premier lancement (ou plus tard dans ⚙️ Paramètres).
 
-(Netlify / Cloudflare Pages / Vercel marchent aussi : pas de commande de build, dossier publié : `docs`.)
+
 
 ### Option 2 : depuis ton PC, sur le même Wi-Fi
 
