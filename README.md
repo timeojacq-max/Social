@@ -1,64 +1,72 @@
 # 🌀 Écho
 
-Un réseau social façon X/Twitter où **tu es le seul humain**. Tous les autres comptes sont des personnages joués par une IA (Claude) : ils postent, se clashent, lancent des rumeurs, réagissent à tes posts, te suivent (ou pas) et te répondent en DM.
+Un réseau social façon X/Twitter où **tu es le seul humain**. Tous les autres comptes sont des personnages joués par une IA (Google Gemini, gratuit) : ils postent, se clashent, lancent des rumeurs, réagissent à tes posts, te suivent (ou pas) et te répondent en DM.
 
-## Fonctionnalités (v0.1)
+C'est une **appli web installable (PWA)** pensée pour le téléphone : elle s'ajoute à l'écran d'accueil et s'ouvre **en plein écran**, comme une vraie appli. Tout tourne dans le navigateur : pas de serveur. Ta partie et ta clé API restent sur ton appareil.
 
-- **Création du monde** : tu choisis ton profil et l'univers (monde réel ultra dramatique, téléréalité, cyberpunk, fantasy, école de magie ou univers libre). L'IA génère le casting (personnalités, secrets, relations), les intrigues de départ et le premier fil.
-- **Fil vivant** : les IA postent toutes seules à intervalles réguliers (tant que l'onglet est ouvert), ou à la demande avec « ⚡ Faire vivre le fil ».
-- **Tes posts font réagir** : réponses, sous-discussions, citations, likes, reposts, nouveaux abonnés, selon ce que tu postes.
-- Réponses en fil, citations, likes, reposts, abonnements, onglets *Pour vous* / *Abonnements*.
-- **Messages privés** avec n'importe quel personnage (ils sont plus francs en privé).
-- **Notifications**, **tendances**, recherche, profils, et les « coulisses » (intrigues en cours, avec spoilers).
-- **Mode mature 18+** (option) : vulgarité, drague, humour noir, clashs sans filtre.
-- **Mode démo** sans clé API, pour tester l'interface.
+## Jouer sur ton téléphone
 
-## Lancer le jeu
+### Option 1 : en ligne (recommandé)
+
+L'appli est un simple site statique (dossier `public/`), donc n'importe quel hébergeur gratuit convient :
+
+- **GitHub Pages** : le workflow `.github/workflows/pages.yml` publie `public/` à chaque push sur `main`. Dans le dépôt : *Settings → Pages → Source : GitHub Actions*. ⚠️ Sur un compte gratuit, GitHub Pages exige un **dépôt public** (aucun secret n'est dans le code, donc c'est sans risque).
+- **Netlify / Cloudflare Pages / Vercel** (marchent avec un dépôt privé) : importe le dépôt, pas de commande de build, dossier publié : `public`.
+
+Ensuite, sur le téléphone :
+1. Ouvre l'adresse du site.
+2. **Android (Chrome)** : menu ⋮ → *Installer l'application*. **iPhone (Safari)** : Partager → *Sur l'écran d'accueil*.
+3. Lance Écho depuis l'icône : plein écran.
+4. Colle ta clé API Gemini au premier lancement (ou plus tard dans ⚙️ Paramètres).
+
+### Option 2 : depuis ton PC, sur le même Wi-Fi
 
 ```bash
-npm install
-cp .env.example .env   # puis mets ta clé dans ANTHROPIC_API_KEY
-npm start              # http://localhost:3000
+npm start
 ```
 
-Sans `ANTHROPIC_API_KEY`, le jeu démarre en **mode démo** avec du contenu factice.
+Le terminal affiche une adresse du type `http://192.168.x.x:3000` à ouvrir sur le téléphone. (Dans ce cas, l'installation en plein écran n'est pas garantie, car les navigateurs l'exigent en HTTPS.)
 
-## Configuration (`.env`)
+## Clé API Gemini (gratuite)
 
-| Variable | Défaut | Rôle |
-|---|---|---|
-| `ANTHROPIC_API_KEY` | — | Clé API Anthropic |
-| `CLAUDE_MODEL` | `claude-opus-5-5` | Modèle qui joue les personnages |
-| `CLAUDE_EFFORT` | `low` | Effort pour le fil, les réactions et les DM (`low` = plus rapide et moins cher) |
-| `CLAUDE_EFFORT_WORLD` | `medium` | Effort pour la création du monde |
-| `TICK_SECONDS` | `90` | Intervalle du fil automatique |
-| `PORT` | `3000` | Port HTTP |
+Crée-la sur <https://aistudio.google.com/apikey>, puis colle-la dans l'appli. Elle est enregistrée uniquement dans le stockage local du navigateur, **jamais dans le code**. Sans clé, l'appli tourne en **mode démo** (contenu factice).
 
-Chaque tick et chaque réaction est un appel API : désactive le « Fil vivant » dans les paramètres si tu veux contrôler la consommation.
+- Modèle par défaut : `gemini-3.5-flash`. Si un modèle est saturé ou si son quota est atteint, l'appli bascule automatiquement sur d'autres modèles Gemini.
+- Le quota gratuit est limité : si tu vois « Quota atteint », attends une minute ou espace le fil automatique (⚙️ → *Fil auto (secondes)*).
+- Sur l'offre gratuite, Google peut utiliser les échanges pour améliorer ses produits.
+
+## Fonctionnalités
+
+- **Création du monde** : univers au choix (monde réel ultra dramatique, téléréalité, cyberpunk, fantasy, école de magie, ou libre). L'IA crée le casting (personnalités, secrets, relations), les intrigues et le premier fil.
+- **Fil vivant** : les IA postent toutes seules tant que l'appli est ouverte, ou à la demande avec ⚡.
+- **Tes posts font réagir** : réponses, sous-discussions, citations, likes, reposts, nouveaux abonnés.
+- Threads, citations, profils, onglets *Pour vous* / *Abonnements*, notifications, tendances, recherche.
+- **Messages privés** avec n'importe quel personnage.
+- **Coulisses** : les intrigues en cours (spoilers) dans Explorer.
+- **Mode mature 18+** (option) : vulgarité, drague, humour noir, clashs sans filtre. Les filtres de sécurité réglables de Gemini sont alors désactivés, mais Google applique toujours ses propres limites, et le jeu interdit tout contenu sexuel impliquant des mineurs.
 
 ## Architecture
 
 ```
-server/
-  index.js   API HTTP (Express), file d'attente des générations, fil automatique
-  ai.js      Prompts et appels à Claude (sorties JSON structurées)
-  engine.js  Règles du jeu : construction du monde, application des actions IA, résumés pour les prompts
-  store.js   Sauvegarde dans data/world.json
-  mock.js    Mode démo
-public/      Interface (HTML/CSS/JS sans framework)
+public/              ← tout le jeu (site statique)
+  index.html, style.css
+  manifest.webmanifest, sw.js, icons/   ← PWA (installation, plein écran, cache)
+  js/app.js          interface (vanilla JS, routage par hash)
+  js/game.js         déroulé de la partie : file d'attente IA, actions du joueur, fil automatique
+  js/ai.js           prompts + appels à l'API Gemini (sorties JSON structurées, repli entre modèles)
+  js/engine.js       règles : construction du monde, application des actions IA
+  js/store.js        sauvegarde locale (localStorage)
+  js/mock.js         mode démo
+serve.js             mini serveur local sans dépendance (npm start)
 ```
 
-L'IA ne renvoie jamais de HTML : elle renvoie une liste d'**actions** (posts, réponses, citations, likes, reposts, abonnements, intrigues, tendances) au format JSON, que le moteur applique au monde. La partie est sauvegardée dans `data/world.json`.
-
-## Contenu
-
-Les personnages sont fictifs. Même en mode mature, le modèle applique les [règles d'utilisation d'Anthropic](https://www.anthropic.com/legal/aup) : certaines demandes (par exemple tout contenu sexuel impliquant des mineurs) seront toujours refusées, et le jeu affiche alors un message d'erreur.
+L'IA ne renvoie jamais de HTML : elle renvoie une liste d'**actions** en JSON (posts, réponses, citations, likes, reposts, abonnements, intrigues, tendances), que le moteur applique au monde.
 
 ## Idées pour la suite
 
-- Images de profil / bannières générées, médias dans les posts
-- Sondages, Spaces, communautés
-- « Célébrité » du joueur : stats, viralité, badge certifié
-- Événements scénarisés (scandale, élection, mariage, guerre…) déclenchables
-- Mémoire long terme par personnage, relations qui évoluent
-- Plusieurs sauvegardes / mondes
+- Images de profil / médias générés
+- Sondages, communautés, Spaces
+- Jauge de célébrité du joueur, viralité, badge certifié
+- Événements scénarisés déclenchables (scandale, élection, mariage…)
+- Mémoire long terme par personnage
+- Plusieurs sauvegardes, export/import de partie
