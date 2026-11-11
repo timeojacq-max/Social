@@ -6,18 +6,19 @@ C'est une **appli web installable (PWA)** pensée pour le téléphone : elle s'a
 
 ## Jouer sur ton téléphone
 
-### Option 1 : en ligne (recommandé)
+### Option 1 : en ligne avec GitHub Pages (recommandé)
 
-L'appli est un simple site statique (dossier `public/`), donc n'importe quel hébergeur gratuit convient :
+Le jeu est un site statique dans le dossier `docs/`. Dans le dépôt : *Settings → Pages → Source : Deploy from a branch → `main` → `/docs` → Save*. Sur un compte gratuit, le dépôt doit être **public** (aucun secret n'est dans le code). Chaque push sur `main` met le site à jour en environ une minute.
 
-- **GitHub Pages** : le workflow `.github/workflows/pages.yml` publie `public/` à chaque push sur `main`. Dans le dépôt : *Settings → Pages → Source : GitHub Actions*. ⚠️ Sur un compte gratuit, GitHub Pages exige un **dépôt public** (aucun secret n'est dans le code, donc c'est sans risque).
-- **Netlify / Cloudflare Pages / Vercel** (marchent avec un dépôt privé) : importe le dépôt, pas de commande de build, dossier publié : `public`.
+Adresse : **https://timeojacq-max.github.io/Social/**
 
 Ensuite, sur le téléphone :
 1. Ouvre l'adresse du site.
 2. **Android (Chrome)** : menu ⋮ → *Installer l'application*. **iPhone (Safari)** : Partager → *Sur l'écran d'accueil*.
 3. Lance Écho depuis l'icône : plein écran.
 4. Colle ta clé API Gemini au premier lancement (ou plus tard dans ⚙️ Paramètres).
+
+(Netlify / Cloudflare Pages / Vercel marchent aussi : pas de commande de build, dossier publié : `docs`.)
 
 ### Option 2 : depuis ton PC, sur le même Wi-Fi
 
@@ -48,7 +49,7 @@ Crée-la sur <https://aistudio.google.com/apikey>, puis colle-la dans l'appli. E
 ## Architecture
 
 ```
-public/              ← tout le jeu (site statique)
+docs/                ← tout le jeu (site statique, publié par GitHub Pages)
   index.html, style.css
   manifest.webmanifest, sw.js, icons/   ← PWA (installation, plein écran, cache)
   js/app.js          interface (vanilla JS, routage par hash)
